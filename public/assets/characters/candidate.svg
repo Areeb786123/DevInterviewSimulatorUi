@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none">
+  <ellipse cx="100" cy="228" rx="48" ry="8" fill="#0a1a22" opacity="0.45"/>
+  <!-- legs -->
+  <path d="M78 150 L70 210 L88 210 L94 152 Z" fill="#1e3a45"/>
+  <path d="M122 150 L106 152 L112 210 L130 210 Z" fill="#244852"/>
+  <!-- hoodie body -->
+  <path d="M62 88 L100 78 L138 88 L148 150 L52 150 Z" fill="#2f6f68"/>
+  <path d="M72 95 L100 88 L128 95 L132 140 L68 140 Z" fill="#3d8a80"/>
+  <!-- hood -->
+  <path d="M70 70 Q100 40 130 70 L120 95 Q100 85 80 95 Z" fill="#245852"/>
+  <!-- head -->
+  <circle cx="100" cy="78" r="22" fill="#d7b39a"/>
+  <!-- backpack -->
+  <rect x="138" y="95" width="22" height="48" rx="6" fill="#e8b84a"/>
+  <rect x="142" y="102" width="14" height="10" rx="2" fill="#0b3d3a"/>
+  <!-- arms -->
+  <path d="M62 100 L40 130 L52 136 L72 112 Z" fill="#3d8a80"/>
+  <path d="M138 100 L160 128 L148 136 L128 112 Z" fill="#2f6f68"/>
+  <!-- fists -->
+  <circle cx="42" cy="134" r="8" fill="#d7b39a"/>
+  <circle cx="158" cy="132" r="8" fill="#d7b39a"/>
+  <!-- mint trim -->
+  <path d="M78 148 H122" stroke="#7dcfb6" stroke-width="3" stroke-linecap="round"/>
+</svg>

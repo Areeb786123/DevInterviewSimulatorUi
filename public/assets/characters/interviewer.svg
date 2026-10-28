@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" fill="none">
+  <ellipse cx="100" cy="228" rx="48" ry="8" fill="#0a1a22" opacity="0.45"/>
+  <!-- legs -->
+  <path d="M78 150 L72 210 L90 210 L96 152 Z" fill="#1a2332"/>
+  <path d="M122 150 L104 152 L110 210 L128 210 Z" fill="#243044"/>
+  <!-- blazer -->
+  <path d="M60 90 L100 78 L140 90 L150 155 L50 155 Z" fill="#243044"/>
+  <path d="M100 82 L100 155" stroke="#e8b84a" stroke-width="2"/>
+  <path d="M72 100 L100 92 L128 100 L130 145 L70 145 Z" fill="#2e3d52"/>
+  <!-- shirt -->
+  <path d="M92 95 L100 90 L108 95 L108 130 L92 130 Z" fill="#f2f5f3"/>
+  <!-- head -->
+  <circle cx="100" cy="70" r="22" fill="#c9a078"/>
+  <!-- hair -->
+  <path d="M78 62 Q100 40 122 62 L118 72 Q100 64 82 72 Z" fill="#1a2332"/>
+  <!-- clipboard -->
+  <rect x="148" y="108" width="28" height="36" rx="3" fill="#e8b84a"/>
+  <rect x="152" y="114" width="20" height="4" fill="#0b3d3a"/>
+  <rect x="152" y="122" width="16" height="3" fill="#0b3d3a" opacity="0.7"/>
+  <rect x="152" y="128" width="18" height="3" fill="#0b3d3a" opacity="0.7"/>
+  <!-- arms -->
+  <path d="M60 105 L48 140 L62 144 L74 112 Z" fill="#2e3d52"/>
+  <path d="M140 102 L168 120 L160 132 L132 112 Z" fill="#243044"/>
+  <circle cx="52" cy="144" r="7" fill="#c9a078"/>
+  <!-- mint badge -->
+  <circle cx="118" cy="118" r="5" fill="#7dcfb6"/>
+</svg>

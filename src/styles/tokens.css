@@ -1,0 +1,113 @@
+:root {
+  --color-field: #0b3d3a;
+  --color-slate: #1a2332;
+  --color-gold: #e8b84a;
+  --color-mint: #7dcfb6;
+  --color-text: #f2f5f3;
+  --color-text-dim: #b7c0bc;
+  --color-plate: rgba(15, 28, 36, 0.72);
+  --color-plate-border: rgba(232, 184, 74, 0.35);
+  --color-hp: #f0d030;
+  --color-hp-empty: #3a2010;
+  --color-arcade-red: #d4452f;
+  --color-arcade-blue: #3a7bd5;
+  --font-display: "Press Start 2P", "Outfit", monospace;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --radius-plate: 4px;
+  --shadow-plate: 0 8px 0 rgba(0, 0, 0, 0.45);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+@keyframes fighter-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fighter-idle-flip {
+  0%,
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-6px);
+  }
+}
+
+@keyframes ready-flash {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.35) drop-shadow(0 0 8px var(--color-gold));
+  }
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hud-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe-idle,
+  .motion-safe-idle-flip,
+  .motion-safe-ready,
+  .motion-safe-tile,
+  .motion-safe-blink {
+    animation: none !important;
+  }
+}
+
+.motion-safe-idle {
+  animation: fighter-idle 1.8s steps(2, end) infinite;
+}
+
+.motion-safe-idle-flip {
+  animation: fighter-idle-flip 1.8s steps(2, end) infinite;
+}
+
+.motion-safe-ready {
+  animation: ready-flash 0.5s steps(2, end) 3;
+}
+
+.motion-safe-tile {
+  animation: tile-in 0.35s steps(4, end) both;
+}
+
+.motion-safe-blink {
+  animation: hud-blink 1s steps(1, end) infinite;
+}

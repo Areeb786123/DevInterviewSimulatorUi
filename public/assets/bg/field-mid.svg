@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <g opacity="0.55">
+    <!-- nearer stone tiles -->
+    <polygon points="100,700 260,620 420,700 260,780" fill="#123834" stroke="#2f6f68" stroke-width="2"/>
+    <polygon points="300,740 460,660 620,740 460,820" fill="#0f2f2c" stroke="#3d8a80" stroke-width="2"/>
+    <polygon points="700,720 900,620 1100,720 900,820" fill="#143c38" stroke="#2f6f68" stroke-width="2"/>
+    <polygon points="1050,750 1220,670 1390,750 1220,830" fill="#0f2f2c" stroke="#3d8a80" stroke-width="2"/>
+  </g>
+  <g opacity="0.25" stroke="#e8b84a" stroke-width="1.5" fill="none">
+    <polyline points="260,700 460,740 900,720 1220,750"/>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b3d3a"/>
+      <stop offset="100%" stop-color="#1a2332" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <!-- distant isometric plateaus -->
+  <g opacity="0.35" fill="#0a2e2c">
+    <polygon points="200,520 320,460 440,520 320,580"/>
+    <polygon points="480,500 640,420 800,500 640,580"/>
+    <polygon points="900,530 1040,470 1180,530 1040,590"/>
+    <polygon points="1200,510 1340,450 1480,510 1340,570"/>
+  </g>
+  <g opacity="0.22" fill="#7dcfb6">
+    <polygon points="320,560 400,520 480,560 400,600"/>
+    <polygon points="1000,570 1100,520 1200,570 1100,620"/>
+  </g>
+</svg>
