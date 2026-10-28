@@ -95,7 +95,10 @@ export class AudioManager {
   }
 
   setVolume(volume: number): void {
-    this.prefs = { ...this.prefs, volume: clampVolume(volume) }
+    this.prefs = {
+      ...this.prefs,
+      volume: clampVolume(volume),
+    }
     this.savePrefs(this.prefs)
     this.applyGain()
   }

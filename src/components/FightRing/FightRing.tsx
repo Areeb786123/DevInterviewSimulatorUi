@@ -11,16 +11,15 @@ export function FightRing({ ready = false }: FightRingProps) {
       aria-label="Candidate versus Interviewer"
     >
       <div
-        className="relative overflow-hidden border-4 border-black px-3 pb-3 pt-4 sm:px-8 sm:pb-4 sm:pt-5"
+        className="relative overflow-hidden px-3 pb-3 pt-4 sm:px-8 sm:pb-4 sm:pt-5"
         style={{
           background:
             'linear-gradient(180deg, rgba(12,20,28,0.55) 0%, rgba(8,12,18,0.92) 55%, #0a1018 100%)',
-          boxShadow:
-            'inset 0 0 0 3px var(--color-gold), 0 16px 0 rgba(0,0,0,0.45), 0 0 40px rgba(0,0,0,0.35)',
+          boxShadow: '0 16px 0 rgba(0,0,0,0.45), 0 0 40px rgba(0,0,0,0.35)',
         }}
       >
         <p
-          className="font-display mb-2 text-center text-[8px] tracking-[0.2em] text-[var(--color-gold)] sm:text-[10px]"
+          className="font-display mb-2 text-center text-[8px] tracking-[0.2em] text-[var(--color-text)] sm:text-[10px]"
           style={{ textShadow: '2px 2px 0 #000' }}
         >
           FIGHTING ARENA
@@ -61,7 +60,7 @@ export function FightRing({ ready = false }: FightRingProps) {
 
         {/* Arena floor */}
         <div
-          className="relative mx-auto mt-1 h-8 max-w-xl border-2 border-black sm:h-10"
+          className="relative mx-auto mt-1 h-8 max-w-xl sm:h-10"
           style={{
             background:
               'repeating-linear-gradient(90deg, #6a6a6a 0 14px, #4a4a4a 14px 28px)',
@@ -70,7 +69,7 @@ export function FightRing({ ready = false }: FightRingProps) {
           }}
         >
           <div
-            className="absolute inset-x-1/4 top-1/2 h-4 -translate-y-1/2 rounded-full border border-[rgba(232,184,74,0.5)]"
+            className="absolute inset-x-1/4 top-1/2 h-4 -translate-y-1/2 rounded-full"
             style={{
               background:
                 'radial-gradient(ellipse at center, rgba(58,123,213,0.35), transparent 70%)',

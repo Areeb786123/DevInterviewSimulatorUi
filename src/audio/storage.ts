@@ -2,7 +2,7 @@ import type { AudioPrefs } from './types'
 
 export const AUDIO_PREFS_KEY = 'dis.audio.prefs'
 
-const DEFAULTS: AudioPrefs = { muted: false, volume: 70 }
+const DEFAULTS: AudioPrefs = { muted: false, volume: 70, musicOn: true }
 
 export function clampVolume(n: number): number {
   if (Number.isNaN(n)) return DEFAULTS.volume
@@ -11,23 +11,29 @@ export function clampVolume(n: number): number {
 
 export function loadAudioPrefs(): AudioPrefs {
   const raw = localStorage.getItem(AUDIO_PREFS_KEY)
-  if (!raw) return { ...DEFAULTS }
-  try {
-    const parsed = JSON.parse(raw) as Partial<AudioPrefs>
-    return {
-      muted: Boolean(parsed.muted),
-      volume: clampVolume(
-        typeof parsed.volume === 'number' ? parsed.volume : DEFAULTS.volume,
-      ),
+  let volume = DEFAULTS.volume
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Partial<AudioPrefs>
+      if (typeof parsed.volume === 'number') {
+        volume = clampVolume(parsed.volume)
+      }
+    } catch {
+      // ignore corrupt prefs; keep defaults
     }
-  } catch {
-    return { ...DEFAULTS }
+  }
+
+  // Every refresh / open: music is ON by default (volume is the only persisted value)
+  return {
+    muted: false,
+    volume,
+    musicOn: true,
   }
 }
 
 export function saveAudioPrefs(prefs: AudioPrefs): void {
-  const next: AudioPrefs = {
-    muted: Boolean(prefs.muted),
+  // Persist volume only so refresh always boots with music on
+  const next = {
     volume: clampVolume(prefs.volume),
   }
   localStorage.setItem(AUDIO_PREFS_KEY, JSON.stringify(next))

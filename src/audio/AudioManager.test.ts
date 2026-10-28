@@ -29,7 +29,7 @@ describe('AudioManager', () => {
   const created: HTMLAudioElement[] = []
 
   beforeEach(() => {
-    prefs = { muted: false, volume: 50 }
+    prefs = { muted: false, volume: 50, musicOn: true }
     created.length = 0
   })
 

@@ -23,18 +23,40 @@ describe('audio prefs storage', () => {
     localStorage.clear()
   })
 
-  it('returns defaults when empty', () => {
-    expect(loadAudioPrefs()).toEqual({ muted: false, volume: 70 })
+  it('returns music on by default', () => {
+    expect(loadAudioPrefs()).toEqual({
+      muted: false,
+      volume: 70,
+      musicOn: true,
+    })
   })
 
-  it('round-trips mute and volume', () => {
-    saveAudioPrefs({ muted: true, volume: 40 })
-    expect(loadAudioPrefs()).toEqual({ muted: true, volume: 40 })
-    expect(localStorage.getItem(AUDIO_PREFS_KEY)).toBeTruthy()
+  it('preserves volume but always loads music on', () => {
+    saveAudioPrefs({ muted: true, volume: 40, musicOn: false })
+    expect(loadAudioPrefs()).toEqual({
+      muted: false,
+      volume: 40,
+      musicOn: true,
+    })
   })
 
   it('ignores corrupt JSON and returns defaults', () => {
     localStorage.setItem(AUDIO_PREFS_KEY, '{not-json')
-    expect(loadAudioPrefs()).toEqual({ muted: false, volume: 70 })
+    expect(loadAudioPrefs()).toEqual({
+      muted: false,
+      volume: 70,
+      musicOn: true,
+    })
+  })
+
+  it('ignores previously saved musicOn false from old sessions', () => {
+    localStorage.setItem(
+      AUDIO_PREFS_KEY,
+      JSON.stringify({ muted: true, volume: 80, musicOn: false }),
+    )
+    const prefs = loadAudioPrefs()
+    expect(prefs.musicOn).toBe(true)
+    expect(prefs.muted).toBe(false)
+    expect(prefs.volume).toBe(80)
   })
 })

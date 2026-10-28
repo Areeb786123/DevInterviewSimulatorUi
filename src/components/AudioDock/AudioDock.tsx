@@ -1,17 +1,44 @@
 import { useAudio } from '../../audio/AudioProvider'
 
+function SoundOnIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden fill="none">
+      <path d="M4 9v6h3l5 4V5L7 9H4z" fill="currentColor" />
+      <path
+        d="M16 8.5a4.5 4.5 0 0 1 0 7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M18.5 6a8 8 0 0 1 0 12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function SoundOffIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden fill="none">
+      <path d="M4 9v6h3l5 4V5L7 9H4z" fill="currentColor" />
+      <path
+        d="M17 9l4 6M21 9l-4 6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export function AudioDock() {
-  const {
-    muted,
-    volume,
-    musicOn,
-    setMuted,
-    setVolume,
-    enableMusic,
-    disableMusic,
-    unlockAudio,
-    playSfx,
-  } = useAudio()
+  const { muted, volume, musicOn, setVolume, enableMusic, disableMusic, unlockAudio } =
+    useAudio()
+
+  const isOn = musicOn && !muted
 
   return (
     <div
@@ -23,21 +50,21 @@ export function AudioDock() {
     >
       <button
         type="button"
-        aria-label={musicOn && !muted ? 'Turn music off' : 'Turn music on'}
-        className="font-display text-[7px] text-[var(--color-gold)] sm:text-[9px]"
-        onClick={() => {
+        aria-label={isOn ? 'Mute sound' : 'Unmute sound'}
+        title={isOn ? 'Sound on' : 'Sound off'}
+        className="flex items-center justify-center text-[var(--color-gold)]"
+        onClick={(e) => {
+          e.stopPropagation()
           void (async () => {
-            if (musicOn && !muted) {
+            if (isOn) {
               disableMusic()
-              setMuted(true)
               return
             }
             await enableMusic()
-            playSfx('click')
           })()
         }}
       >
-        {musicOn && !muted ? 'MUSIC ON' : 'MUSIC OFF'}
+        {isOn ? <SoundOnIcon /> : <SoundOffIcon />}
       </button>
       <input
         type="range"

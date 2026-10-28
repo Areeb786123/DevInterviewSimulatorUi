@@ -4,10 +4,12 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
 import { AudioManager } from './AudioManager'
+import { saveAudioPrefs } from './storage'
 import type { SfxName } from './types'
 
 type AudioContextValue = {
@@ -21,6 +23,7 @@ type AudioContextValue = {
   playSfx: (name: SfxName) => void
   setMuted: (muted: boolean) => void
   setVolume: (volume: number) => void
+  armDefaultMusic: () => Promise<void>
 }
 
 const AudioContext = createContext<AudioContextValue | null>(null)
@@ -39,12 +42,25 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     [],
   )
 
+  const armedRef = useRef(false)
   const [unlocked, setUnlocked] = useState(false)
-  const [musicOn, setMusicOn] = useState(false)
-  const [muted, setMutedState] = useState(() => manager.getPrefs().muted)
+  // Always ON visually on every open/refresh
+  const [musicOn, setMusicOn] = useState(true)
+  const [muted, setMutedState] = useState(false)
   const [volume, setVolumeState] = useState(() => manager.getPrefs().volume)
 
   useEffect(() => () => manager.dispose(), [manager])
+
+  const persistVolume = useCallback(
+    (vol: number) => {
+      saveAudioPrefs({
+        muted: false,
+        volume: vol,
+        musicOn: true,
+      })
+    },
+    [],
+  )
 
   const unlockAudio = useCallback(async () => {
     await manager.unlock()
@@ -57,14 +73,25 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     setUnlocked(true)
     manager.setMuted(false)
     setMutedState(false)
-    manager.playBgm()
     setMusicOn(true)
+    manager.playBgm()
+    armedRef.current = true
   }, [manager])
 
   const disableMusic = useCallback(() => {
     manager.stopBgm()
+    manager.setMuted(true)
+    setMutedState(true)
     setMusicOn(false)
+    armedRef.current = false
   }, [manager])
+
+  const armDefaultMusic = useCallback(async () => {
+    // If user muted this session, do nothing
+    if (!musicOn || muted) return
+    if (armedRef.current && manager.isBgmPlaying()) return
+    await enableMusic()
+  }, [musicOn, muted, manager, enableMusic])
 
   const playSfx = useCallback(
     (name: SfxName) => {
@@ -75,21 +102,23 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 
   const setMuted = useCallback(
     (next: boolean) => {
-      manager.setMuted(next)
-      setMutedState(next)
       if (next) {
-        setMusicOn(false)
+        disableMusic()
+      } else {
+        void enableMusic()
       }
     },
-    [manager],
+    [disableMusic, enableMusic],
   )
 
   const setVolume = useCallback(
     (next: number) => {
       manager.setVolume(next)
-      setVolumeState(manager.getPrefs().volume)
+      const vol = manager.getPrefs().volume
+      setVolumeState(vol)
+      persistVolume(vol)
     },
-    [manager],
+    [manager, persistVolume],
   )
 
   const value = useMemo(
@@ -104,6 +133,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       playSfx,
       setMuted,
       setVolume,
+      armDefaultMusic,
     }),
     [
       unlocked,
@@ -116,6 +146,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       playSfx,
       setMuted,
       setVolume,
+      armDefaultMusic,
     ],
   )
 

@@ -35,7 +35,7 @@ export function ModeSelect({
         }}
       >
         <p className="font-display mb-4 text-center text-[8px] text-[var(--color-gold)] sm:text-[10px]">
-          SELECT YOUR TRAINING
+          CHOOSE ARENA
         </p>
 
         <div className="flex flex-col gap-2">
@@ -108,7 +108,7 @@ export function ModeSelect({
           </p>
         ) : (
           <p className="font-display mt-3 text-center text-[7px] text-[var(--color-text-dim)]">
-            Press ENTER on System Design
+            Pick System Design to enter the arena
           </p>
         )}
       </div>
