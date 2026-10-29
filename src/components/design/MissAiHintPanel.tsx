@@ -7,7 +7,7 @@ export type MissAiHintPanelProps = {
   onHint?: () => void
 }
 
-/** Constant Miss AI UI — reused on every level; only `hints` change. */
+/** Miss AI hints for the question column. */
 export function MissAiHintPanel({ hints, onHint }: MissAiHintPanelProps) {
   const [hintIndex, setHintIndex] = useState(-1)
 
@@ -28,37 +28,31 @@ export function MissAiHintPanel({ hints, onHint }: MissAiHintPanelProps) {
 
   return (
     <div
-      className="mt-2 shrink-0 rounded-md p-2.5"
+      className="mt-2 shrink-0 rounded-md p-2"
       style={{
-        background: 'rgba(10, 35, 50, 0.98)',
-        border: '2px solid #4fd2ff',
-        boxShadow: '0 3px 0 #000, 0 0 12px rgba(79,210,255,0.25)',
+        background: 'rgba(10, 35, 50, 0.95)',
+        border: '1px solid rgba(79,210,255,0.5)',
+        boxShadow: '0 2px 0 #000',
       }}
       aria-label={MISS_AI.name}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
         <div
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg"
-          style={{
-            background: 'rgba(0,0,0,0.35)',
-            border: '2px solid #9fe8ff',
-          }}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded"
+          style={{ background: 'rgba(0,0,0,0.35)' }}
         >
-          <MissAiAvatar className="h-12 w-12" />
+          <MissAiAvatar className="h-9 w-9" />
         </div>
         <div className="min-w-0 flex-1">
           <p
-            className="font-fighter text-sm tracking-wide text-[#9fe8ff] sm:text-base"
-            style={{ textShadow: '0 0 8px rgba(79,210,255,0.6), 0 1px 0 #000' }}
+            className="font-fighter text-[10px] tracking-wide text-[#9fe8ff]"
+            style={{ textShadow: '0 1px 0 #000' }}
           >
             {MISS_AI.nameUpper}
           </p>
-          <p className="font-body text-xs text-white/80 sm:text-sm">
-            {MISS_AI.tagline}
-          </p>
           <button
             type="button"
-            className="font-fighter mt-1.5 rounded px-3 py-1.5 text-[10px] text-[#0b1a33] sm:text-xs"
+            className="font-fighter mt-1 rounded px-2.5 py-1 text-[9px] text-[#0b1a33] disabled:opacity-50"
             style={{
               background: 'linear-gradient(180deg,#9fe8ff,#4fd2ff)',
               boxShadow: '0 2px 0 #1a5080',
@@ -76,16 +70,13 @@ export function MissAiHintPanel({ hints, onHint }: MissAiHintPanelProps) {
       </div>
       {activeHint ? (
         <p
-          className="font-body mt-2.5 text-sm leading-snug text-white sm:text-base"
-          style={{ textShadow: '0 1px 2px #000' }}
+          className="font-body mt-2 text-xs leading-snug text-white"
           role="status"
         >
           {activeHint}
         </p>
       ) : (
-        <p className="font-body mt-2.5 text-sm text-white/75">
-          {MISS_AI.idlePrompt}
-        </p>
+        <p className="font-body mt-2 text-xs text-white/65">{MISS_AI.idlePrompt}</p>
       )}
     </div>
   )

@@ -8,7 +8,7 @@ export function FightRing({ ready = false }: FightRingProps) {
   return (
     <section
       className="relative z-20 w-full max-w-3xl px-3"
-      aria-label="Candidate versus Interviewer"
+      aria-label="Candidate versus Interviewer AI"
     >
       <div
         className="relative overflow-hidden px-3 pb-3 pt-4 sm:px-8 sm:pb-4 sm:pt-5"
@@ -53,7 +53,7 @@ export function FightRing({ ready = false }: FightRingProps) {
             role="interviewer"
             facing="left"
             ready={ready}
-            label="INTERVIEWER"
+            label="INTERVIEWER AI"
             labelColor="var(--color-arcade-red)"
           />
         </div>

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { LevelPlayPage } from './LevelPlayPage'
@@ -45,7 +45,7 @@ describe('LevelPlayPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Traffic Spike')).toBeInTheDocument()
     })
-    expect(screen.getByRole('button', { name: /load balancer/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Load Balancer' })).toBeInTheDocument()
   })
 
   it('does not place on bare board click', async () => {
@@ -60,4 +60,81 @@ describe('LevelPlayPage', () => {
     await waitFor(() => screen.getByRole('button', { name: 'Client' }))
     expect(screen.queryByTestId('clear-celebration')).not.toBeInTheDocument()
   })
+
+  it('opens review mode dialog from AI REVIEW', async () => {
+    renderLevel('level-1')
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /open ai interview review options/i }),
+      ).toBeInTheDocument()
+    })
+    fireEvent.click(
+      screen.getByRole('button', { name: /open ai interview review options/i }),
+    )
+    expect(
+      screen.getByRole('dialog', { name: /choose interview review mode/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /choose base run/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /choose ai run/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /choose ultra ai run/i }),
+    ).toBeInTheDocument()
+  })
+
+
+
+  it('keeps timer and budget in the top HUD', async () => {
+    renderLevel('level-1')
+    await waitFor(() => {
+      expect(screen.getByLabelText(/time remaining/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/^budget$/i)).toBeInTheDocument()
+    })
+  })
+
+  it('opens explanation dialog from the edit strip', async () => {
+    renderLevel('level-1')
+    await waitFor(() =>
+      screen.getByRole('button', { name: /edit architecture explanation/i }),
+    )
+    fireEvent.click(
+      screen.getByRole('button', { name: /edit architecture explanation/i }),
+    )
+    expect(
+      screen.getByRole('dialog', { name: /explain your architecture/i }),
+    ).toBeInTheDocument()
+  })
 })
+
+describe('LevelPlayPage interview API', () => {
+  const fetchMock = vi.fn()
+
+  beforeEach(() => {
+    fetchMock.mockReset()
+    vi.stubGlobal('fetch', fetchMock)
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('does not call API until a review mode is chosen', async () => {
+    renderLevel('level-1')
+    await waitFor(() =>
+      screen.getByRole('button', { name: /open ai interview review options/i }),
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open ai interview review options/i }),
+    )
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(
+      screen.getByRole('dialog', { name: /choose interview review mode/i }),
+    ).toBeInTheDocument()
+  })
+})
+
+

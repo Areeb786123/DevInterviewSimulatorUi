@@ -49,7 +49,7 @@ export function InterviewerCoach({
       >
         <img
           src="/assets/fighters/interviewer/idle/idle_00.png"
-          alt="Interviewer"
+          alt="Interviewer AI"
           className="pixelated h-full w-full object-cover object-top"
           style={{ imageRendering: 'pixelated', transform: 'scaleX(-1)' }}
           draggable={false}

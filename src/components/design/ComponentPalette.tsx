@@ -1,4 +1,7 @@
-import type { PaletteItem } from '../../levels/types'
+import { useState } from 'react'
+import { getComponentKnowledge } from '../../levels/componentKnowledge'
+import type { ComponentKind, PaletteItem } from '../../levels/types'
+import { ComponentInfoPanel } from './ComponentInfoPanel'
 
 export const DND_KIND_MIME = 'application/x-sysdesign-kind'
 
@@ -7,80 +10,112 @@ export type ComponentPaletteProps = {
 }
 
 export function ComponentPalette({ items }: ComponentPaletteProps) {
+  const [openKind, setOpenKind] = useState<ComponentKind | null>(null)
+  const knowledge = openKind ? getComponentKnowledge(openKind) : null
+
   return (
-    <div
-      className="relative z-20 w-full overflow-x-auto overscroll-x-contain px-2 py-2"
-      style={{
-        background:
-          'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(8,12,20,0.88) 100%)',
-        boxShadow: '0 6px 0 rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.08)',
-        scrollbarWidth: 'thin',
-      }}
-      aria-label="System components"
-    >
-      <p className="font-fighter mb-2 px-1 text-xs tracking-[0.2em] text-[var(--color-gold)] sm:text-sm">
-        INVENTORY · DRAG TO BOARD
-      </p>
-      <div className="flex w-max gap-2.5 pb-1">
-        {items.map((item) => {
-          return (
-            <button
-              key={item.kind}
-              type="button"
-              draggable
-              aria-label={item.label}
-              className="group relative shrink-0 cursor-grab rounded-md active:cursor-grabbing"
-              style={{
-                width: 112,
-                border: '2px solid rgba(255,255,255,0.2)',
-                boxShadow: '0 4px 0 #000',
-                background:
-                  'linear-gradient(160deg, #2a3a55 0%, #121a28 100%)',
-              }}
-              onClick={(e) => {
-                // Inventory is drag-only — prevent accidental “selected then click board” places
-                e.preventDefault()
-              }}
-              onDragStart={(e) => {
-                e.dataTransfer.setData(DND_KIND_MIME, item.kind)
-                e.dataTransfer.setData('text/plain', item.kind)
-                e.dataTransfer.effectAllowed = 'copy'
-              }}
-            >
-              <div className="pointer-events-none flex flex-col items-center px-2 pb-2.5 pt-2">
-                <img
-                  src={item.iconUrl}
-                  alt=""
-                  className="h-14 w-14 drop-shadow-md"
-                  draggable={false}
-                />
-                <span
-                  className="font-fighter mt-1.5 text-center text-xs leading-tight text-white sm:text-sm"
-                  style={{ textShadow: '0 1px 0 #000' }}
-                >
-                  {item.label}
-                </span>
-                <span className="font-fighter mt-0.5 text-center text-[10px] text-white/70 sm:text-xs">
-                  {item.tagline}
-                </span>
-                <span
-                  className="font-fighter mt-1.5 rounded px-1.5 py-0.5 text-[10px] text-[#1a1208] sm:text-xs"
-                  style={{
-                    background:
-                      item.cost === 0
-                        ? '#7dcfb6'
-                        : item.cost <= 20
-                          ? '#ffe566'
-                          : '#ff8a7a',
-                  }}
-                >
-                  {item.cost === 0 ? 'FREE' : `$${item.cost}`}
-                </span>
-              </div>
-            </button>
-          )
-        })}
+    <>
+      <div
+        className="relative z-20 w-full overflow-x-auto overscroll-x-contain px-2 py-2"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(12,18,28,0.95) 0%, rgba(8,12,20,0.88) 100%)',
+          boxShadow:
+            '0 6px 0 rgba(0,0,0,0.45), inset 0 -1px 0 rgba(255,255,255,0.08)',
+          scrollbarWidth: 'thin',
+        }}
+        aria-label="System components"
+      >
+        <p className="font-fighter mb-2 px-1 text-xs tracking-[0.2em] text-[var(--color-gold)] sm:text-sm">
+          INVENTORY · DRAG TO BOARD · TAP ⓘ TO LEARN
+        </p>
+        <div className="flex w-max gap-2.5 pb-1">
+          {items.map((item) => (
+            <div key={item.kind} className="relative shrink-0">
+              <button
+                type="button"
+                draggable
+                aria-label={item.label}
+                className="group relative cursor-grab rounded-md active:cursor-grabbing"
+                style={{
+                  width: 112,
+                  border: '2px solid rgba(255,255,255,0.2)',
+                  boxShadow: '0 4px 0 #000',
+                  background:
+                    'linear-gradient(160deg, #2a3a55 0%, #121a28 100%)',
+                }}
+                onClick={(e) => {
+                  e.preventDefault()
+                }}
+                onDragStart={(e) => {
+                  setOpenKind(null)
+                  e.dataTransfer.setData(DND_KIND_MIME, item.kind)
+                  e.dataTransfer.setData('text/plain', item.kind)
+                  e.dataTransfer.effectAllowed = 'copy'
+                }}
+              >
+                <div className="pointer-events-none flex flex-col items-center px-2 pb-2.5 pt-2">
+                  <img
+                    src={item.iconUrl}
+                    alt=""
+                    className="h-14 w-14 drop-shadow-md"
+                    draggable={false}
+                  />
+                  <span
+                    className="font-fighter mt-1.5 text-center text-xs leading-tight text-white sm:text-sm"
+                    style={{ textShadow: '0 1px 0 #000' }}
+                  >
+                    {item.label}
+                  </span>
+                  <span className="font-fighter mt-0.5 text-center text-[10px] text-white/70 sm:text-xs">
+                    {item.tagline}
+                  </span>
+                  <span
+                    className="font-fighter mt-1.5 rounded px-1.5 py-0.5 text-[10px] text-[#1a1208] sm:text-xs"
+                    style={{
+                      background:
+                        item.cost === 0
+                          ? '#7dcfb6'
+                          : item.cost <= 20
+                            ? '#ffe566'
+                            : '#ff8a7a',
+                    }}
+                  >
+                    {item.cost === 0 ? 'FREE' : `$${item.cost}`}
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                aria-label={`What is ${item.label}?`}
+                aria-expanded={openKind === item.kind}
+                className="font-fighter absolute -right-1 -top-1 z-30 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold text-[#1a1208]"
+                style={{
+                  background:
+                    'linear-gradient(180deg, #ffe566 0%, #e8b84a 100%)',
+                  border: '2px solid #1a1208',
+                  boxShadow: '0 2px 0 #000',
+                }}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setOpenKind(item.kind)
+                }}
+              >
+                i
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+
+      <ComponentInfoPanel
+        open={openKind != null}
+        knowledge={knowledge}
+        onClose={() => setOpenKind(null)}
+      />
+    </>
   )
 }

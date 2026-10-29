@@ -33,7 +33,7 @@ export function ArcadeHud() {
 
         <div>
           <p className="font-display mb-1 text-right text-[8px] text-[var(--color-arcade-red)] sm:text-[10px]">
-            INTERVIEWER
+            INTERVIEWER AI
           </p>
           <div
             className="h-3 w-full border-2 border-black sm:h-4"

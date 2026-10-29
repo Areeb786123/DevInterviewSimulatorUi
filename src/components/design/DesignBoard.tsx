@@ -16,6 +16,8 @@ export type DesignBoardProps = {
   onNodeMove: (id: string, x: number, y: number) => void
   onConnect: (fromId: string, toId: string) => void
   onNodeRemove: (id: string) => void
+  /** Fired on pointer-up when the node was clicked without dragging. */
+  onNodeSelect?: (id: string) => void
 }
 
 function clamp(n: number, min: number, max: number) {
@@ -48,6 +50,7 @@ export function DesignBoard({
   onNodeMove,
   onConnect,
   onNodeRemove,
+  onNodeSelect,
 }: DesignBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null)
   /** Last pointer position during inventory drag — drop events can report 0,0 */
@@ -288,6 +291,7 @@ export function DesignBoard({
               onPointerUp={(e) => {
                 const d = moveRef.current
                 if (!d || d.id !== n.id) return
+                const wasClick = !d.moved
                 moveRef.current = null
                 try {
                   ;(e.currentTarget as HTMLElement).releasePointerCapture(
@@ -296,6 +300,7 @@ export function DesignBoard({
                 } catch {
                   /* ignore */
                 }
+                if (wasClick) onNodeSelect?.(n.id)
               }}
             >
               <button
