@@ -23,17 +23,36 @@ describe('ModeSelect', () => {
   it('calls onSystemDesignEnter for unlocked mode', async () => {
     const user = userEvent.setup()
     const onEnter = vi.fn()
-    render(<ModeSelect onSystemDesignEnter={onEnter} />)
+    const onDsa = vi.fn()
+    render(
+      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+    )
     await user.click(screen.getByRole('button', { name: /system design/i }))
     expect(onEnter).toHaveBeenCalled()
   })
 
-  it('shows coming soon for DSA and does not navigate', async () => {
+  it('calls onDsaEnter for DSA Prep', async () => {
     const user = userEvent.setup()
     const onEnter = vi.fn()
-    render(<ModeSelect onSystemDesignEnter={onEnter} />)
-    await user.click(screen.getByRole('button', { name: /dsa/i }))
+    const onDsa = vi.fn()
+    render(
+      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+    )
+    await user.click(screen.getByRole('button', { name: /dsa prep/i }))
+    expect(onDsa).toHaveBeenCalled()
+    expect(onEnter).not.toHaveBeenCalled()
+  })
+
+  it('shows coming soon for SQL and does not navigate', async () => {
+    const user = userEvent.setup()
+    const onEnter = vi.fn()
+    const onDsa = vi.fn()
+    render(
+      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+    )
+    await user.click(screen.getByRole('button', { name: /sql/i }))
     expect(screen.getByText(/coming soon/i)).toBeInTheDocument()
     expect(onEnter).not.toHaveBeenCalled()
+    expect(onDsa).not.toHaveBeenCalled()
   })
 })

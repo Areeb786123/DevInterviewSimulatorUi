@@ -43,6 +43,7 @@ export function HomePage() {
         <div className="flex w-full flex-1 flex-col items-center justify-center py-3">
           <ModeSelect
             onSystemDesignEnter={() => navigate('/system-design')}
+            onDsaEnter={() => navigate('/dsa')}
             onSystemDesignHoverChange={setReady}
           />
         </div>

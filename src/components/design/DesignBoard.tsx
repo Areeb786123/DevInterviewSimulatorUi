@@ -2,8 +2,8 @@ import { useMemo, useRef, useState } from 'react'
 import type { ComponentKind, Edge, LevelConfig, PlacedNode } from '../../levels/types'
 import { DND_KIND_MIME } from './ComponentPalette'
 
-const NODE_W = 80
-const NODE_H = 72
+const NODE_W = 96
+const NODE_H = 88
 const DRAG_THRESHOLD = 5
 
 export type DesignBoardProps = {
@@ -150,23 +150,25 @@ export function DesignBoard({
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="10"
-            markerHeight="8"
-            refX="9"
-            refY="4"
+            markerUnits="userSpaceOnUse"
+            markerWidth="8"
+            markerHeight="6"
+            refX="7"
+            refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 10 4, 0 8" fill="#7dcfb6" />
+            <polygon points="0 0, 8 3, 0 6" fill="#c4b5fd" />
           </marker>
           <marker
             id="arrowhead-drag"
-            markerWidth="10"
-            markerHeight="8"
-            refX="9"
-            refY="4"
+            markerUnits="userSpaceOnUse"
+            markerWidth="8"
+            markerHeight="6"
+            refX="7"
+            refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 10 4, 0 8" fill="#ffe566" />
+            <polygon points="0 0, 8 3, 0 6" fill="#e9d5ff" />
           </marker>
         </defs>
 
@@ -178,25 +180,36 @@ export function DesignBoard({
           const y1 = a.y + NODE_H / 2
           const x2 = b.x + 4
           const y2 = b.y + NODE_H / 2
+          const hot =
+            packetEdgeId === e.id && packetProgress != null
           return (
             <g key={e.id}>
+              {/* Soft underlay so gaps read as a continuous pipe */}
               <line
                 x1={x1}
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                stroke="rgba(125,207,182,0.9)"
-                strokeWidth={3}
+                className="edge-stream-base"
                 markerEnd="url(#arrowhead)"
               />
-              {packetEdgeId === e.id && packetProgress != null ? (
+              {/* Lavender dashes streaming along the connection */}
+              <line
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                className={hot ? 'edge-stream edge-stream-hot' : 'edge-stream'}
+              />
+              {hot ? (
                 <circle
-                  r={8}
+                  className="edge-packet-ball"
+                  r={7}
                   fill="#ffe566"
-                  stroke="#000"
+                  stroke="#1a1208"
                   strokeWidth={2}
-                  cx={x1 + (x2 - x1) * packetProgress}
-                  cy={y1 + (y2 - y1) * packetProgress}
+                  cx={x1 + (x2 - x1) * packetProgress!}
+                  cy={y1 + (y2 - y1) * packetProgress!}
                 />
               ) : null}
             </g>
@@ -300,10 +313,13 @@ export function DesignBoard({
               <img
                 src={meta?.iconUrl}
                 alt=""
-                className="pointer-events-none mx-auto h-10 w-10"
+                className="pointer-events-none mx-auto h-12 w-12"
                 draggable={false}
               />
-              <p className="font-fighter pointer-events-none mt-0.5 text-center text-[8px] text-white">
+              <p
+                className="font-fighter pointer-events-none mt-1 text-center text-xs leading-tight text-white sm:text-sm"
+                style={{ textShadow: '0 1px 0 #000' }}
+              >
                 {meta?.label}
               </p>
 
@@ -356,7 +372,7 @@ export function DesignBoard({
                   window.addEventListener('pointerup', onUp)
                 }}
               >
-                <span className="pointer-events-none font-fighter text-[10px] text-[#1a1208]">
+                <span className="pointer-events-none font-fighter text-xs text-[#1a1208]">
                   →
                 </span>
               </button>
@@ -366,7 +382,7 @@ export function DesignBoard({
       })}
 
       {nodes.length === 0 ? (
-        <p className="font-fighter pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center text-[10px] text-white/70">
+        <p className="font-fighter pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-white/80 sm:text-base">
           Drag parts from inventory onto the board (drop where you want them)
         </p>
       ) : null}

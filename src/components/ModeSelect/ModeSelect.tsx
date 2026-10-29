@@ -3,6 +3,7 @@ import { useAudio } from '../../audio/AudioProvider'
 
 export type ModeSelectProps = {
   onSystemDesignEnter: () => void
+  onDsaEnter: () => void
   onSystemDesignHoverChange?: (hovering: boolean) => void
 }
 
@@ -14,12 +15,13 @@ type Mode = {
 
 const MODES: Mode[] = [
   { id: 'system-design', label: 'System Design', locked: false },
-  { id: 'dsa', label: 'DSA Prep', locked: true },
+  { id: 'dsa', label: 'DSA Prep', locked: false },
   { id: 'sql', label: 'SQL Prep', locked: true },
 ]
 
 export function ModeSelect({
   onSystemDesignEnter,
+  onDsaEnter,
   onSystemDesignHoverChange,
 }: ModeSelectProps) {
   const { playSfx, unlockAudio } = useAudio()
@@ -58,10 +60,14 @@ export function ModeSelect({
                     : '3px 3px 0 #000',
                 }}
                 onMouseEnter={() => {
-                  if (unlocked) onSystemDesignHoverChange?.(true)
+                  if (mode.id === 'system-design' && unlocked) {
+                    onSystemDesignHoverChange?.(true)
+                  }
                 }}
                 onMouseLeave={() => {
-                  if (unlocked) onSystemDesignHoverChange?.(false)
+                  if (mode.id === 'system-design') {
+                    onSystemDesignHoverChange?.(false)
+                  }
                 }}
                 onClick={() => {
                   void (async () => {
@@ -73,7 +79,8 @@ export function ModeSelect({
                     }
                     playSfx('enter')
                     setMessage(null)
-                    onSystemDesignEnter()
+                    if (mode.id === 'system-design') onSystemDesignEnter()
+                    else if (mode.id === 'dsa') onDsaEnter()
                   })()
                 }}
               >
@@ -108,7 +115,7 @@ export function ModeSelect({
           </p>
         ) : (
           <p className="font-display mt-3 text-center text-[7px] text-[var(--color-text-dim)]">
-            Pick System Design to enter the arena
+            System Design or DSA Prep to enter
           </p>
         )}
       </div>

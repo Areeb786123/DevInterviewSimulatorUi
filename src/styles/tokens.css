@@ -244,6 +244,105 @@
   animation-iteration-count: infinite;
 }
 
+/* System-design edge stream (marching dashes) */
+@keyframes edge-stream-flow {
+  to {
+    stroke-dashoffset: -56;
+  }
+}
+
+.edge-stream-base {
+  stroke: rgba(167, 139, 250, 0.35);
+  stroke-width: 10;
+  stroke-linecap: butt;
+  stroke-dasharray: 18 14;
+  fill: none;
+  pointer-events: none;
+}
+
+.edge-stream {
+  stroke: #c4b5fd;
+  stroke-width: 8;
+  stroke-linecap: butt;
+  stroke-dasharray: 18 14;
+  fill: none;
+  animation: edge-stream-flow 0.85s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(196, 181, 253, 0.55));
+}
+
+.edge-stream-hot {
+  stroke: #e9d5ff;
+  stroke-width: 9;
+  animation-duration: 0.45s;
+  filter: drop-shadow(0 0 6px rgba(233, 213, 255, 0.85));
+}
+
+.edge-packet-ball {
+  filter: drop-shadow(0 0 6px rgba(255, 229, 102, 0.75));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-stream,
+  .edge-stream-hot {
+    animation: none !important;
+  }
+}
+
+/* DSA ball simulator — physical slot moves */
+.ball-token {
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  transition:
+    left 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
+    transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
+    box-shadow 0.25s ease;
+  will-change: left, transform;
+}
+
+.ball-token-focus {
+  transform: translateY(-10px) scale(1.06);
+}
+
+.ball-token-swap {
+  animation: ball-arc-swap 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@keyframes ball-arc-swap {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-22px) scale(1.12);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ball-swap-arc {
+  height: 28px;
+  border: 2px dashed rgba(255, 214, 90, 0.65);
+  border-bottom: none;
+  border-radius: 40px 40px 0 0;
+  opacity: 0.9;
+  animation: ball-arc-fade 0.5s ease;
+}
+
+@keyframes ball-arc-fade {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  40% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+
 .clear-burst {
   width: 8px;
   height: 8px;
@@ -262,7 +361,13 @@
   .motion-safe-level-star,
   .clear-spark,
   .clear-burst,
-  .clear-burst-ray {
+  .clear-burst-ray,
+  .ball-token-swap,
+  .ball-swap-arc {
     animation: none !important;
+  }
+
+  .ball-token {
+    transition: none !important;
   }
 }
