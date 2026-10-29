@@ -25,6 +25,17 @@ describe('ComponentInfoPanel', () => {
     )
     expect(screen.getByText(/Q1\./i)).toBeInTheDocument()
     expect(screen.getAllByText(/SAMPLE:/i).length).toBeGreaterThan(0)
+    // Overview closes when another section opens (accordion)
+    expect(
+      screen.queryByText(knowledge.beginnerExplanation.slice(0, 40), {
+        exact: false,
+      }),
+    ).not.toBeInTheDocument()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /why does it exist/i }),
+    )
+    expect(screen.queryByText(/Q1\./i)).not.toBeInTheDocument()
   })
 
   it('calls onClose from CLOSE', () => {

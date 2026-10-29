@@ -19,7 +19,7 @@ import { ExplanationDialog } from '../../components/design/ExplanationDialog'
 import { InterviewerAiRail } from '../../components/design/InterviewerAiRail'
 import { InterviewerPanel } from '../../components/design/InterviewerPanel'
 import { LevelHud } from '../../components/design/LevelHud'
-import { QuestionRail } from '../../components/design/QuestionRail'
+import { QuestionBriefDialog } from '../../components/design/QuestionBriefDialog'
 import {
   ReviewModeDialog,
   type ReviewMode,
@@ -85,6 +85,7 @@ export function LevelPlayPage() {
   const [decisionNodeId, setDecisionNodeId] = useState<string | null>(null)
   const [explanationOpen, setExplanationOpen] = useState(false)
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
+  const [questionOpen, setQuestionOpen] = useState(false)
 
   const architecturePreview = useMemo(() => {
     if (!level) return '(empty board)'
@@ -483,8 +484,8 @@ export function LevelPlayPage() {
       <AudioDock />
 
       <div className="relative z-10 flex min-h-0 flex-1">
-        {/* 1 · Building */}
-        <div className="flex min-h-0 min-w-0 flex-[54] flex-col">
+        {/* Building */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 px-2 pt-2 sm:px-3 sm:pt-3">
             <Link
               to="/system-design/social-media"
@@ -497,6 +498,21 @@ export function LevelPlayPage() {
             >
               ← Back
             </Link>
+            <button
+              type="button"
+              className="font-fighter rounded px-3 py-1.5 text-[10px] font-bold tracking-wide text-[#1a1208] sm:text-xs"
+              style={{
+                background: 'linear-gradient(180deg, #ffe566 0%, #e8b84a 100%)',
+                boxShadow: '0 3px 0 #8a6010',
+              }}
+              aria-label="View question"
+              onClick={() => {
+                playSfx('click')
+                setQuestionOpen(true)
+              }}
+            >
+              VIEW QUESTION
+            </button>
             <LevelHud
               secondsLeft={secondsLeft}
               spent={spent}
@@ -688,6 +704,7 @@ export function LevelPlayPage() {
                   setDecisionNodeId(null)
                   setExplanationOpen(false)
                   setReviewDialogOpen(false)
+                  setQuestionOpen(false)
                   setMood('idle')
                   setTimedOut(false)
                   celebratedRef.current = false
@@ -701,14 +718,7 @@ export function LevelPlayPage() {
           </div>
         </div>
 
-        {/* 2 · Question */}
-        <QuestionRail
-          question={level.question}
-          hints={level.hints}
-          onHint={() => playSfx('click')}
-        />
-
-        {/* 3 · Interviewer AI */}
+        {/* Interviewer AI */}
         <InterviewerAiRail
           saying={saying}
           mood={mood}
@@ -728,6 +738,14 @@ export function LevelPlayPage() {
           }
         />
       </div>
+
+      <QuestionBriefDialog
+        open={questionOpen}
+        question={level.question}
+        hints={level.hints}
+        onHint={() => playSfx('click')}
+        onClose={() => setQuestionOpen(false)}
+      />
 
       <DecisionDialog
         open={decisionNodeId != null && decisionNode != null}

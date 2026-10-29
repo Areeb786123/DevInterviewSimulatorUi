@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import type { ComponentKnowledge } from '../../levels/componentKnowledge/types'
 
 export type ComponentInfoPanelProps = {
@@ -123,29 +123,25 @@ export function ComponentInfoPanel({
   onClose,
 }: ComponentInfoPanelProps) {
   const titleId = useId()
-  const [openSections, setOpenSections] = useState<Set<SectionId>>(
-    () => new Set(['overview']),
-  )
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+  /** One open section at a time — accordion style. */
+  const [openSection, setOpenSection] = useState<SectionId | null>('overview')
 
   useEffect(() => {
     if (!open) return
-    setOpenSections(new Set(['overview']))
+    setOpenSection('overview')
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') onCloseRef.current()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, knowledge?.id, onClose])
+  }, [open, knowledge?.id])
 
   if (!open || !knowledge) return null
 
   function toggle(id: SectionId) {
-    setOpenSections((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+    setOpenSection((prev) => (prev === id ? null : id))
   }
 
   const k = knowledge
@@ -170,6 +166,8 @@ export function ComponentInfoPanel({
           border: '3px solid var(--color-gold)',
           boxShadow: '0 10px 0 #000, 0 0 32px rgba(232,184,74,0.28)',
         }}
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <header className="flex shrink-0 items-start gap-3 border-b border-white/15 px-4 py-3 sm:px-5">
           <img
@@ -213,7 +211,7 @@ export function ComponentInfoPanel({
               id={`comp-info-${s.id}`}
               label={s.label}
               badge={s.badge}
-              open={openSections.has(s.id)}
+              open={openSection === s.id}
               onToggle={() => toggle(s.id)}
             >
               {s.id === 'overview' ? (

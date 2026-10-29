@@ -22,7 +22,7 @@ export function InterviewerAiRail({
 
   return (
     <aside
-      className="flex h-full min-h-0 w-[24%] min-w-[12rem] shrink-0 flex-col overflow-hidden sm:min-w-[14rem]"
+      className="flex h-full min-h-0 w-[28%] min-w-[13rem] shrink-0 flex-col overflow-hidden sm:min-w-[15rem]"
       style={{
         background:
           'linear-gradient(180deg, rgba(12,18,28,0.98) 0%, rgba(8,12,18,0.98) 100%)',
