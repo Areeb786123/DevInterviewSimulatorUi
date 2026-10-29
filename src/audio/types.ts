@@ -5,4 +5,4 @@ export type AudioPrefs = {
   musicOn: boolean
 }
 
-export type SfxName = 'click' | 'deny' | 'enter'
+export type SfxName = 'click' | 'deny' | 'enter' | 'applause' | 'victory'

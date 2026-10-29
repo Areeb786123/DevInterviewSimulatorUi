@@ -40,6 +40,8 @@ describe('AudioManager', () => {
         click: '/assets/audio/click.wav',
         deny: '/assets/audio/deny.wav',
         enter: '/assets/audio/enter.wav',
+        applause: '/assets/audio/applause.wav',
+        victory: '/assets/audio/victory.wav',
       },
       loadPrefs: () => ({ ...prefs }),
       savePrefs: (p) => {

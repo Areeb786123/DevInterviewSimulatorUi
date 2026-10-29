@@ -12,13 +12,21 @@
   --color-arcade-red: #d4452f;
   --color-arcade-blue: #3a7bd5;
   --font-display: "Press Start 2P", "Outfit", monospace;
+  --font-fighter: "Oswald", "IBM Plex Sans", sans-serif;
   --font-body: "IBM Plex Sans", sans-serif;
+  --color-neon: #4fd2ff;
+  --color-metal: #9aa3ad;
+  --color-stage-bg: #060b14;
   --radius-plate: 4px;
   --shadow-plate: 0 8px 0 rgba(0, 0, 0, 0.45);
 }
 
 .font-display {
   font-family: var(--font-display);
+}
+
+.font-fighter {
+  font-family: var(--font-fighter);
 }
 
 .font-body {
@@ -110,4 +118,151 @@
 
 .motion-safe-blink {
   animation: hud-blink 1s steps(1, end) infinite;
+}
+
+@keyframes shard-drift {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(12px, -40px, 0) rotate(18deg);
+    opacity: 0.1;
+  }
+}
+
+@keyframes lens-sweep {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.motion-safe-shard {
+  animation: shard-drift 7s linear infinite;
+}
+
+.motion-safe-lens {
+  animation: lens-sweep 4s ease-in-out infinite;
+}
+
+@keyframes level-hover {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes level-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.25;
+  }
+}
+
+@keyframes level-star-twinkle {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.35) drop-shadow(0 0 6px #fff);
+  }
+}
+
+.motion-safe-level-hover {
+  animation: level-hover 1.6s ease-in-out infinite;
+}
+
+.motion-safe-level-pulse {
+  animation: level-pulse 1.6s ease-in-out infinite;
+}
+
+.motion-safe-level-star {
+  animation: level-star-twinkle 1.2s ease-in-out infinite;
+}
+
+@keyframes clear-spark-fall {
+  0% {
+    transform: translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) scale(1.1) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes clear-burst-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@keyframes clear-burst-ray {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--ray-angle, 0deg)) translateY(0)
+      scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--ray-angle, 0deg))
+      translateY(-48px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.clear-spark {
+  animation-name: clear-spark-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.clear-burst {
+  width: 8px;
+  height: 8px;
+  animation: clear-burst-pop 2.4s ease-out infinite;
+}
+
+.clear-burst-ray {
+  animation: clear-burst-ray 2.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe-shard,
+  .motion-safe-lens,
+  .motion-safe-level-hover,
+  .motion-safe-level-pulse,
+  .motion-safe-level-star,
+  .clear-spark,
+  .clear-burst,
+  .clear-burst-ray {
+    animation: none !important;
+  }
 }

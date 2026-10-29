@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
+  <ellipse cx="48" cy="52" rx="34" ry="18" fill="#5b8def" stroke="#0b1a33" stroke-width="3"/>
+  <ellipse cx="48" cy="44" rx="28" ry="14" fill="#8eb6ff" stroke="#0b1a33" stroke-width="2.5"/>
+  <path d="M22 44c6-10 14-16 26-16s20 6 26 16" stroke="#0b1a33" stroke-width="2.5" fill="none"/>
+  <circle cx="34" cy="48" r="4" fill="#fff"/>
+  <circle cx="48" cy="42" r="4" fill="#fff"/>
+  <circle cx="62" cy="48" r="4" fill="#fff"/>
+  <text x="48" y="78" text-anchor="middle" font-size="11" font-family="Arial,sans-serif" fill="#e8f0ff" font-weight="700">CDN</text>
+</svg>

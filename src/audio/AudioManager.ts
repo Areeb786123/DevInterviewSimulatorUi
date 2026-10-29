@@ -28,6 +28,8 @@ export class AudioManager {
       click: createAudio(opts.sfx.click),
       deny: createAudio(opts.sfx.deny),
       enter: createAudio(opts.sfx.enter),
+      applause: createAudio(opts.sfx.applause),
+      victory: createAudio(opts.sfx.victory),
     }
     this.applyGain()
   }

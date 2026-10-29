@@ -1,12 +1,19 @@
 import { Route, Routes } from 'react-router-dom'
 import { HomePage } from './pages/Home/HomePage'
-import { MapSelectPlaceholderPage } from './pages/MapSelectPlaceholder/MapSelectPlaceholderPage'
+import { ArenaSelectPage } from './pages/ArenaSelect/ArenaSelectPage'
+import { LevelMapPage } from './pages/LevelMap/LevelMapPage'
+import { LevelPlayPage } from './pages/LevelPlay/LevelPlayPage'
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/system-design" element={<MapSelectPlaceholderPage />} />
+      <Route path="/system-design" element={<ArenaSelectPage />} />
+      <Route path="/system-design/social-media" element={<LevelMapPage />} />
+      <Route
+        path="/system-design/social-media/:levelId"
+        element={<LevelPlayPage />}
+      />
     </Routes>
   )
 }
