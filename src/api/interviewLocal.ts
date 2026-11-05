@@ -38,7 +38,9 @@ function scoreSubmit(submit: ArchitectureSubmit): EvaluationResult {
   score = Math.min(10, Math.max(1, score))
 
   const passed = score >= 8
-  const followUpQuestion: FollowUpQuestion | null = passed
+  // Sandbox is feedback-only: never emit a follow-up question.
+  const followUpQuestion: FollowUpQuestion | null =
+    passed || submit.mapId === 'sandbox'
     ? null
     : {
         question:

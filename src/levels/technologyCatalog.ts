@@ -45,4 +45,5 @@ export const TECHNOLOGY_CATALOG: Record<ComponentKind, TechnologyMeta> = {
   'object-store': getTechnologyMeta('object-store'),
   cdn: getTechnologyMeta('cdn'),
   websocket: getTechnologyMeta('websocket'),
+  custom: getTechnologyMeta('custom'),
 }

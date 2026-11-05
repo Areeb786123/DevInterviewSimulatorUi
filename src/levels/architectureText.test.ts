@@ -24,6 +24,47 @@ describe('architectureText', () => {
     expect(text).toMatch(/postgres|sql/i)
   })
 
+  it('prefers node.label over palette kind name', () => {
+    const text = formatArchitecturePath(
+      [
+        { id: 'a', kind: 'custom', x: 0, y: 0, label: 'Auth Gateway' },
+        { id: 'b', kind: 'server', x: 40, y: 0 },
+      ],
+      [{ id: 'e1', from: 'a', to: 'b' }],
+      [
+        ...SOCIAL_MEDIA_L1.palette,
+        {
+          kind: 'custom',
+          label: 'Custom',
+          tagline: 'Free-form',
+          iconUrl: '/assets/sysdesign/server.svg',
+          cost: 0,
+          dbFamily: 'compute',
+        },
+      ],
+    )
+    expect(text).toMatch(/Auth Gateway/i)
+    expect(text).not.toMatch(/^custom ->/i)
+  })
+
+  it('reports an unused node whose label is a substring of a path label', () => {
+    const text = formatArchitecturePath(
+      [
+        { id: 'c', kind: 'client', x: 0, y: 0 },
+        { id: 'gateway', kind: 'custom', x: 40, y: 0, label: 'Auth Gateway' },
+        { id: 'auth', kind: 'custom', x: 40, y: 40, label: 'Auth' },
+      ],
+      [
+        { id: 'e1', from: 'c', to: 'gateway' },
+        { id: 'e2', from: 'c', to: 'auth' },
+      ],
+      SOCIAL_MEDIA_L1.palette,
+    )
+
+    expect(text).toContain('client -> Auth Gateway')
+    expect(text).toContain('(also: Auth)')
+  })
+
   it('builds an auto explanation without requiring user prose', () => {
     const explanation = buildAutoExplanation(
       [{ id: 'c', kind: 'client', x: 0, y: 0 }],

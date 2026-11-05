@@ -13,6 +13,7 @@ const ALL_KINDS: ComponentKind[] = [
   'object-store',
   'cdn',
   'websocket',
+  'custom',
 ]
 
 describe('componentTips', () => {

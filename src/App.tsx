@@ -16,6 +16,7 @@ export default function App() {
         path="/system-design/social-media/:levelId"
         element={<LevelPlayPage />}
       />
+      <Route path="/system-design/sandbox" element={<LevelPlayPage />} />
       <Route path="/dsa" element={<DsaListPage />} />
       <Route path="/dsa/:questionId" element={<DsaSolvePage />} />
     </Routes>

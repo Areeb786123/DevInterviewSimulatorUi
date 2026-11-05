@@ -235,6 +235,7 @@ export function DesignBoard({
 
       {nodes.map((n) => {
         const meta = iconByKind.get(n.kind)
+        const title = n.label?.trim() || meta?.label || n.kind
         const isTarget = hoverTargetId === n.id
         return (
           <div
@@ -325,7 +326,7 @@ export function DesignBoard({
                 className="font-fighter pointer-events-none mt-1 text-center text-xs leading-tight text-white sm:text-sm"
                 style={{ textShadow: '0 1px 0 #000' }}
               >
-                {meta?.label}
+                {title}
               </p>
 
               <button
