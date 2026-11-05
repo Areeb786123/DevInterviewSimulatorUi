@@ -6,8 +6,16 @@ import {
   startInterviewLocal,
 } from './interviewLocal'
 
-/** Empty VITE_API_BASE_URL → relative `/api` (Vite proxies to localhost:4000 in dev). */
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
+/**
+ * API origin for interview calls.
+ * - Dev: empty → relative `/api` (Vite proxies to localhost:4000).
+ * - Prod: set `VITE_API_BASE_URL`, or fall back to the deployed backend.
+ */
+const API_BASE =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ||
+  (import.meta.env.PROD
+    ? 'https://dev-interview-simulator-backend.vercel.app'
+    : '')
 
 const CLIENT_ID_KEY = 'devsim.clientId'
 
