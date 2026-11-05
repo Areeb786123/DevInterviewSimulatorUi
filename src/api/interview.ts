@@ -33,6 +33,7 @@ export type ArchitectureComponent = {
   kind: ComponentKind
   x: number
   y: number
+  label?: string
 }
 
 export type ArchitectureConnection = {
@@ -51,6 +52,8 @@ export type ArchitectureSubmit = {
   levelContext?: {
     title?: string
     question?: string
+    reviewMode?: 'base' | 'ai' | 'ultra'
+    architecturePath?: string
     win?: {
       requiredPath?: string[]
       minCounts?: Record<string, number>

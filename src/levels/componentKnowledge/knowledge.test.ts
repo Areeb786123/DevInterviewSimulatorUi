@@ -18,6 +18,7 @@ const ALL_KINDS: ComponentKind[] = [
   'object-store',
   'cdn',
   'websocket',
+  'custom',
 ]
 
 function expectNonEmptyString(value: string, min = 20) {

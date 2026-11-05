@@ -25,8 +25,9 @@ export function InterviewerPanel({
     )
   }
 
-  const followUp =
-    pendingFollowUp ?? evaluation?.followUpQuestion ?? null
+  // Interactive answer UI only when the page explicitly passes a pending follow-up
+  // (sandbox passes null). Never fall back to evaluation.followUpQuestion.
+  const followUp = pendingFollowUp
   const passed = evaluation?.passed === true
 
   return (

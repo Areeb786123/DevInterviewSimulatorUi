@@ -11,6 +11,7 @@ export type ComponentKind =
   | 'object-store'
   | 'cdn'
   | 'websocket'
+  | 'custom'
 
 export type PaletteItem = {
   kind: ComponentKind
@@ -65,6 +66,8 @@ export type PlacedNode = {
   kind: ComponentKind
   x: number
   y: number
+  /** User-facing name; required for `custom`, optional override for catalog kinds */
+  label?: string
 }
 
 export type Edge = {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import {
   answerInterview,
   evaluateInterview,
@@ -19,6 +19,7 @@ import { ExplanationDialog } from '../../components/design/ExplanationDialog'
 import { InterviewerAiRail } from '../../components/design/InterviewerAiRail'
 import { InterviewerPanel } from '../../components/design/InterviewerPanel'
 import { LevelHud } from '../../components/design/LevelHud'
+import { NodeLabelDialog } from '../../components/design/NodeLabelDialog'
 import { QuestionBriefDialog } from '../../components/design/QuestionBriefDialog'
 import {
   ReviewModeDialog,
@@ -59,6 +60,8 @@ function applyInterviewResult(
 }
 
 export function LevelPlayPage() {
+  const location = useLocation()
+  const isSandbox = location.pathname === '/system-design/sandbox'
   const { levelId = 'level-1' } = useParams<{ levelId: string }>()
   const { playSfx, armDefaultMusic } = useAudio()
   const [level, setLevel] = useState<LevelConfig | null>(null)
@@ -86,6 +89,11 @@ export function LevelPlayPage() {
   const [explanationOpen, setExplanationOpen] = useState(false)
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false)
   const [questionOpen, setQuestionOpen] = useState(false)
+  const [labelPrompt, setLabelPrompt] = useState<null | {
+    mode: 'create' | 'edit'
+    nodeId: string
+    initial: string
+  }>(null)
 
   const architecturePreview = useMemo(() => {
     if (!level) return '(empty board)'
@@ -93,11 +101,11 @@ export function LevelPlayPage() {
   }, [level, nodes, edges])
 
   const celebratePass = useCallback(() => {
-    if (celebratedRef.current) return
+    if (isSandbox || celebratedRef.current) return
     celebratedRef.current = true
     playSfx('applause')
     window.setTimeout(() => playSfx('victory'), 700)
-  }, [playSfx])
+  }, [playSfx, isSandbox])
 
   useEffect(() => {
     let cancelled = false
@@ -113,10 +121,14 @@ export function LevelPlayPage() {
     setFollowUpAnswer('')
     setDecisionNodeId(null)
     setExplanationOpen(false)
+    setLabelPrompt(null)
     celebratedRef.current = false
     void (async () => {
       try {
-        const cfg = await getLevel('social-media', levelId)
+        const cfg = await getLevel(
+          isSandbox ? 'sandbox' : 'social-media',
+          isSandbox ? 'playground' : levelId,
+        )
         if (cancelled) return
         setLevel(cfg)
         setSaying(cfg.interviewerBubble)
@@ -130,10 +142,11 @@ export function LevelPlayPage() {
     return () => {
       cancelled = true
     }
-  }, [levelId])
+  }, [levelId, isSandbox])
 
   useEffect(() => {
-    if (!level || timedOut || mood === 'ok') return
+    if (isSandbox || !level || level.timeLimitSec <= 0) return
+    if (timedOut || mood === 'ok') return
     if (secondsLeft <= 0) {
       setTimedOut(true)
       setMood('fail')
@@ -143,7 +156,7 @@ export function LevelPlayPage() {
     }
     const id = window.setTimeout(() => setSecondsLeft((s) => s - 1), 1000)
     return () => window.clearTimeout(id)
-  }, [level, secondsLeft, timedOut, mood, playSfx])
+  }, [isSandbox, level, secondsLeft, timedOut, mood, playSfx])
 
   const spent = useMemo(
     () => (level ? spentBudget(level, nodes) : 0),
@@ -181,8 +194,9 @@ export function LevelPlayPage() {
       const path = formatArchitecturePath(nodes, edges, level.palette)
       const auto = buildAutoExplanation(nodes, edges, level)
       const userText = explanation.trim()
-      const explanationText =
-        mode === 'ultra' && userText
+      const explanationText = isSandbox
+        ? userText
+        : mode === 'ultra' && userText
           ? `${auto}\n\nPlayer notes:\n${userText}`
           : auto
 
@@ -194,6 +208,7 @@ export function LevelPlayPage() {
           kind: n.kind,
           x: n.x,
           y: n.y,
+          ...(n.label?.trim() ? { label: n.label.trim() } : {}),
         })),
         connections: edges.map((e) => ({
           id: e.id,
@@ -220,7 +235,7 @@ export function LevelPlayPage() {
         },
       }
     },
-    [level, nodes, edges, decisions, explanation],
+    [level, nodes, edges, decisions, explanation, isSandbox],
   )
 
   const runSimulation = useCallback(async () => {
@@ -288,7 +303,8 @@ export function LevelPlayPage() {
 
   const runAiReview = useCallback(
     async (mode: 'ai' | 'ultra') => {
-      if (!level || interviewBusy || timedOut || mood === 'ok') return
+      if (!level || interviewBusy || timedOut) return
+      if (!isSandbox && mood === 'ok') return
       if (nodes.length === 0) {
         setSaying('Place at least one component on the board first.')
         setMood('fail')
@@ -309,6 +325,16 @@ export function LevelPlayPage() {
 
       try {
         let current = interview
+        // Backend only accepts evaluate/revise for IN_PROGRESS / NEEDS_REVISION;
+        // terminal interviews need a fresh one.
+        if (
+          current &&
+          (current.status === 'PASSED' ||
+            current.status === 'FAILED' ||
+            current.status === 'ABANDONED')
+        ) {
+          current = null
+        }
         if (!current) {
           const started = await startInterview({
             levelId: level.id,
@@ -373,6 +399,7 @@ export function LevelPlayPage() {
       interviewBusy,
       timedOut,
       mood,
+      isSandbox,
       nodes.length,
       buildSubmit,
       interview,
@@ -488,7 +515,7 @@ export function LevelPlayPage() {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 px-2 pt-2 sm:px-3 sm:pt-3">
             <Link
-              to="/system-design/social-media"
+              to={isSandbox ? '/' : '/system-design/social-media'}
               className="inline-flex items-center rounded px-3 py-1.5 font-fighter text-sm font-bold text-white"
               style={{
                 background: 'linear-gradient(180deg, #8b5a2b 0%, #5c3a18 100%)',
@@ -513,11 +540,13 @@ export function LevelPlayPage() {
             >
               VIEW QUESTION
             </button>
-            <LevelHud
-              secondsLeft={secondsLeft}
-              spent={spent}
-              budget={level.budget}
-            />
+            {isSandbox ? null : (
+              <LevelHud
+                secondsLeft={secondsLeft}
+                spent={spent}
+                budget={level.budget}
+              />
+            )}
             <div className="min-w-0 flex-1 text-right sm:flex-none">
               <p
                 className="font-fighter text-sm font-bold italic text-white sm:text-lg"
@@ -536,7 +565,7 @@ export function LevelPlayPage() {
           </div>
 
           <div className="relative mx-2 mt-1 flex min-h-0 flex-1 flex-col gap-1.5 pb-2 sm:mx-3">
-            {mood === 'ok' ? (
+            {mood === 'ok' && !isSandbox ? (
               <ClearCelebration
                 next={nextLevel}
                 onNextClick={() => playSfx('click')}
@@ -549,8 +578,8 @@ export function LevelPlayPage() {
               packetProgress={packetProgress}
               packetEdgeId={packetEdgeId}
               onPlace={(kind, x, y) => {
-                if (timedOut || mood === 'ok') return
-                if (!canAfford(level, nodes, kind)) {
+                if (timedOut || (!isSandbox && mood === 'ok')) return
+                if (!isSandbox && !canAfford(level, nodes, kind)) {
                   playSfx('deny')
                   setMood('fail')
                   setSaying(level.overBudgetBubble)
@@ -559,6 +588,9 @@ export function LevelPlayPage() {
                 playSfx('click')
                 const id = `n-${crypto.randomUUID()}`
                 setNodes((prev) => [...prev, { id, kind, x, y }])
+                if (isSandbox && kind === 'custom') {
+                  setLabelPrompt({ mode: 'create', nodeId: id, initial: '' })
+                }
                 setMood('idle')
               }}
               onNodeMove={(id, x, y) => {
@@ -591,9 +623,22 @@ export function LevelPlayPage() {
                   return next
                 })
                 if (decisionNodeId === id) setDecisionNodeId(null)
+                setLabelPrompt((prev) => (prev?.nodeId === id ? null : prev))
               }}
               onNodeSelect={(id) => {
-                if (timedOut || mood === 'ok') return
+                if (timedOut) return
+                if (isSandbox) {
+                  const node = nodes.find((n) => n.id === id)
+                  if (!node) return
+                  playSfx('click')
+                  setLabelPrompt({
+                    mode: 'edit',
+                    nodeId: id,
+                    initial: node.label ?? '',
+                  })
+                  return
+                }
+                if (mood === 'ok') return
                 playSfx('click')
                 setDecisionNodeId(id)
               }}
@@ -612,7 +657,7 @@ export function LevelPlayPage() {
                   '0 4px 0 #000, 0 0 18px rgba(232,184,74,0.2)',
               }}
               aria-label="Edit architecture explanation"
-              disabled={mood === 'ok' || timedOut}
+              disabled={(!isSandbox && mood === 'ok') || timedOut}
               onClick={() => {
                 playSfx('click')
                 setExplanationOpen(true)
@@ -646,10 +691,39 @@ export function LevelPlayPage() {
               </span>
             </button>
 
-            <p className="font-fighter w-full text-[9px] tracking-wide text-white/55 sm:text-[10px]">
-              ▶ PLAY = animate traffic · AI REVIEW = choose Base / AI / Ultra
-            </p>
+            {isSandbox ? null : (
+              <p className="font-fighter w-full text-[9px] tracking-wide text-white/55 sm:text-[10px]">
+                ▶ PLAY = animate traffic · AI REVIEW = choose Base / AI / Ultra
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-2">
+              {isSandbox ? (
+                <button
+                  type="button"
+                  aria-label="AI Run"
+                  disabled={
+                    interviewBusy || nodes.length === 0 || !explanation.trim()
+                  }
+                  className="font-fighter rounded px-5 py-2 text-sm font-bold tracking-wide text-[#1a1208] disabled:opacity-60"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, #ffe566 0%, #e8b84a 100%)',
+                    boxShadow:
+                      '0 4px 0 #8a6010, 0 0 20px rgba(232,184,74,0.45), inset 0 1px 0 #fff6',
+                  }}
+                  onClick={() => {
+                    if (!explanation.trim()) {
+                      playSfx('deny')
+                      setSaying('Write your architecture explanation before AI Run.')
+                      return
+                    }
+                    void runAiReview('ai')
+                  }}
+                >
+                  {interviewBusy ? '…' : 'AI Run'}
+                </button>
+              ) : (
+                <>
               <button
                 type="button"
                 aria-label="Play simulation"
@@ -686,6 +760,8 @@ export function LevelPlayPage() {
               >
                 {interviewBusy ? '…' : 'AI REVIEW'}
               </button>
+                </>
+              )}
               <button
                 type="button"
                 className="font-fighter rounded px-3 py-2 text-[10px] text-white"
@@ -703,6 +779,7 @@ export function LevelPlayPage() {
                   setFollowUpAnswer('')
                   setDecisionNodeId(null)
                   setExplanationOpen(false)
+                  setLabelPrompt(null)
                   setReviewDialogOpen(false)
                   setQuestionOpen(false)
                   setMood('idle')
@@ -726,7 +803,7 @@ export function LevelPlayPage() {
             showInterviewPanel && interview ? (
               <InterviewerPanel
                 evaluation={interview.latestEvaluation}
-                pendingFollowUp={interview.pendingFollowUp}
+                pendingFollowUp={isSandbox ? null : interview.pendingFollowUp}
                 answer={followUpAnswer}
                 onAnswerChange={setFollowUpAnswer}
                 onSubmitAnswer={() => {
@@ -772,6 +849,32 @@ export function LevelPlayPage() {
         }}
       />
 
+      <NodeLabelDialog
+        open={labelPrompt != null}
+        title={
+          labelPrompt?.mode === 'create' ? 'Name your component' : 'Edit label'
+        }
+        initial={labelPrompt?.initial ?? ''}
+        onCancel={() => {
+          if (labelPrompt?.mode === 'create') {
+            const id = labelPrompt.nodeId
+            setNodes((prev) => prev.filter((n) => n.id !== id))
+            setEdges((prev) => prev.filter((e) => e.from !== id && e.to !== id))
+          }
+          setLabelPrompt(null)
+        }}
+        onSave={(label) => {
+          if (!labelPrompt) return
+          const id = labelPrompt.nodeId
+          setNodes((prev) =>
+            prev.map((n) => (n.id === id ? { ...n, label } : n)),
+          )
+          setLabelPrompt(null)
+          playSfx('enter')
+        }}
+      />
+
+      {isSandbox ? null : (
       <ReviewModeDialog
         open={reviewDialogOpen}
         busy={interviewBusy}
@@ -779,6 +882,7 @@ export function LevelPlayPage() {
         onCancel={() => setReviewDialogOpen(false)}
         onChoose={onReviewModeChosen}
       />
+      )}
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useAudio } from '../../audio/AudioProvider'
 export type ModeSelectProps = {
   onSystemDesignEnter: () => void
   onDsaEnter: () => void
+  onCustomDesignEnter: () => void
   onSystemDesignHoverChange?: (hovering: boolean) => void
 }
 
@@ -16,12 +17,14 @@ type Mode = {
 const MODES: Mode[] = [
   { id: 'system-design', label: 'System Design', locked: false },
   { id: 'dsa', label: 'DSA Prep', locked: false },
+  { id: 'custom-design', label: 'Custom Design Simulate', locked: false },
   { id: 'sql', label: 'SQL Prep', locked: true },
 ]
 
 export function ModeSelect({
   onSystemDesignEnter,
   onDsaEnter,
+  onCustomDesignEnter,
   onSystemDesignHoverChange,
 }: ModeSelectProps) {
   const { playSfx, unlockAudio } = useAudio()
@@ -81,6 +84,9 @@ export function ModeSelect({
                     setMessage(null)
                     if (mode.id === 'system-design') onSystemDesignEnter()
                     else if (mode.id === 'dsa') onDsaEnter()
+                    else if (mode.id === 'custom-design') {
+                      onCustomDesignEnter()
+                    }
                   })()
                 }}
               >

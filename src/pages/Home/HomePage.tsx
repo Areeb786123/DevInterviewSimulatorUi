@@ -44,6 +44,7 @@ export function HomePage() {
           <ModeSelect
             onSystemDesignEnter={() => navigate('/system-design')}
             onDsaEnter={() => navigate('/dsa')}
+            onCustomDesignEnter={() => navigate('/system-design/sandbox')}
             onSystemDesignHoverChange={setReady}
           />
         </div>

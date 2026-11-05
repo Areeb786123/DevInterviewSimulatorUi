@@ -28,4 +28,5 @@ export const COMPONENT_TIPS: Record<ComponentKind, ComponentTip> = {
   'object-store': getComponentTip('object-store'),
   cdn: getComponentTip('cdn'),
   websocket: getComponentTip('websocket'),
+  custom: getComponentTip('custom'),
 }

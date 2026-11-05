@@ -25,7 +25,11 @@ describe('ModeSelect', () => {
     const onEnter = vi.fn()
     const onDsa = vi.fn()
     render(
-      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+      <ModeSelect
+        onSystemDesignEnter={onEnter}
+        onDsaEnter={onDsa}
+        onCustomDesignEnter={vi.fn()}
+      />,
     )
     await user.click(screen.getByRole('button', { name: /system design/i }))
     expect(onEnter).toHaveBeenCalled()
@@ -36,11 +40,31 @@ describe('ModeSelect', () => {
     const onEnter = vi.fn()
     const onDsa = vi.fn()
     render(
-      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+      <ModeSelect
+        onSystemDesignEnter={onEnter}
+        onDsaEnter={onDsa}
+        onCustomDesignEnter={vi.fn()}
+      />,
     )
     await user.click(screen.getByRole('button', { name: /dsa prep/i }))
     expect(onDsa).toHaveBeenCalled()
     expect(onEnter).not.toHaveBeenCalled()
+  })
+
+  it('calls onCustomDesignEnter for Custom Design Simulate', async () => {
+    const user = userEvent.setup()
+    const onCustom = vi.fn()
+    render(
+      <ModeSelect
+        onSystemDesignEnter={vi.fn()}
+        onDsaEnter={vi.fn()}
+        onCustomDesignEnter={onCustom}
+      />,
+    )
+    await user.click(
+      screen.getByRole('button', { name: /custom design simulate/i }),
+    )
+    expect(onCustom).toHaveBeenCalled()
   })
 
   it('shows coming soon for SQL and does not navigate', async () => {
@@ -48,7 +72,11 @@ describe('ModeSelect', () => {
     const onEnter = vi.fn()
     const onDsa = vi.fn()
     render(
-      <ModeSelect onSystemDesignEnter={onEnter} onDsaEnter={onDsa} />,
+      <ModeSelect
+        onSystemDesignEnter={onEnter}
+        onDsaEnter={onDsa}
+        onCustomDesignEnter={vi.fn()}
+      />,
     )
     await user.click(screen.getByRole('button', { name: /sql/i }))
     expect(screen.getByText(/coming soon/i)).toBeInTheDocument()

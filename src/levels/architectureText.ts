@@ -11,12 +11,18 @@ const KIND_LABEL: Record<string, string> = {
   'object-store': 'object store',
   cdn: 'cdn',
   websocket: 'websocket',
+  custom: 'custom',
 }
 
 function labelFor(kind: string, palette?: LevelConfig['palette']) {
   const fromPalette = palette?.find((p) => p.kind === kind)?.label
   if (fromPalette) return fromPalette.toLowerCase()
   return KIND_LABEL[kind] ?? kind
+}
+
+function displayLabel(n: PlacedNode, palette?: LevelConfig['palette']) {
+  if (n.label?.trim()) return n.label.trim()
+  return labelFor(n.kind, palette)
 }
 
 /**
@@ -43,13 +49,15 @@ export function formatArchitecturePath(
   const roots = starts.length > 0 ? starts : [nodes[0]!]
 
   const paths: string[] = []
+  const traversedIds = new Set<string>()
   for (const root of roots) {
     const path: string[] = []
-    const seen = new Set<string>()
+    const pathSeen = new Set<string>()
     let cur: PlacedNode | undefined = root
-    while (cur && !seen.has(cur.id)) {
-      seen.add(cur.id)
-      path.push(labelFor(cur.kind, palette))
+    while (cur && !pathSeen.has(cur.id)) {
+      pathSeen.add(cur.id)
+      traversedIds.add(cur.id)
+      path.push(displayLabel(cur, palette))
       const nextIds = out.get(cur.id)
       const nextId: string | undefined = nextIds?.[0]
       cur = nextId ? byId.get(nextId) : undefined
@@ -57,14 +65,13 @@ export function formatArchitecturePath(
     if (path.length > 0) paths.push(path.join(' -> '))
   }
 
-  const unused = nodes.filter((n) => {
-    return !paths.some((p) => p.includes(labelFor(n.kind, palette)))
-  })
+  const unused = nodes.filter((n) => !traversedIds.has(n.id))
   // Prefer longest path; append orphan kinds if any
   paths.sort((a, b) => b.length - a.length)
-  const primary = paths[0] ?? nodes.map((n) => labelFor(n.kind, palette)).join(' + ')
+  const primary =
+    paths[0] ?? nodes.map((n) => displayLabel(n, palette)).join(' + ')
   if (unused.length === 0) return primary
-  const extra = [...new Set(unused.map((n) => labelFor(n.kind, palette)))].join(
+  const extra = [...new Set(unused.map((n) => displayLabel(n, palette)))].join(
     ', ',
   )
   return `${primary} (also: ${extra})`
